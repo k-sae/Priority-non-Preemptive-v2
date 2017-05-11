@@ -79,7 +79,7 @@ public class Main extends Application{
         ScrollPane scrollPane = new ScrollPane(registerPage);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-        //stage.setResizable(false);
+//        stage.setResizable(false);
         stage.setScene(new Scene(scrollPane,960,600));
         stage.show();
     }

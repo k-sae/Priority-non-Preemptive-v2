@@ -1,5 +1,7 @@
 package com.company;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -13,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
+import javax.swing.*;
 import javax.swing.table.*;
 import java.util.ArrayList;
 
@@ -24,7 +27,7 @@ public class ResultPage extends VBox {
     private ArrayList<ProcessResult> processResults;
     private TableView <ProcessResult> table;
     private Button restartBtn;
-
+    private int pSum;
     public ResultPage(ArrayList <Process> processes){
         this.processes = processes;
         Results results = new Results(processes);
@@ -89,15 +92,27 @@ public class ResultPage extends VBox {
 
     private void drawChart(){
         HBox chart = new HBox(1);
-        for(int i=0; i< processResults.size(); i++){
-            Label process = new Label("P" + processResults.get(i).getNumber());
-            process.setMinWidth((processResults.get(i).getEndTime() - processResults.get(i).getStartTime())*50);
-            process.setMinHeight(50);
-            process.setAlignment(Pos.CENTER);
-            process.setStyle("-fx-background-color: #ff0000");
-            Label processStartTime = new Label(""+processResults.get(i).getStartTime());
-            chart.getChildren().add(new VBox(process,processStartTime));
+        for (ProcessResult processResult: processResults
+             ) {
+            pSum += processResult.getEndTime() - processResult.getStartTime();
         }
+        chart.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                chart.getChildren().clear();
+                for(int i=0; i< processResults.size(); i++){
+                    Label process = new Label("P" + processResults.get(i).getNumber());
+                    float pwidth = (((float)(processResults.get(i).getEndTime() - processResults.get(i).getStartTime())/(float)(pSum)) * newValue.floatValue());
+                    process.setMinWidth(pwidth - 1);
+                    process.setMinHeight(50);
+                    process.setAlignment(Pos.CENTER);
+                    process.setStyle("-fx-background-color: #ff0000");
+                    Label processStartTime = new Label(""+processResults.get(i).getStartTime());
+                    chart.getChildren().add(new VBox(process,processStartTime));
+                    System.out.println(newValue);
+                }
+            }
+        });
         getChildren().add(chart);
     }
 }
