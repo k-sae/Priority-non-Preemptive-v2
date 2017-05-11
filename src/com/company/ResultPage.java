@@ -27,10 +27,11 @@ public class ResultPage extends VBox {
     private ArrayList<ProcessResult> processResults;
     private TableView <ProcessResult> table;
     private Button restartBtn;
+    private Results results;
     private int pSum;
     public ResultPage(ArrayList <Process> processes){
         this.processes = processes;
-        Results results = new Results(processes);
+        results = new Results(processes);
         processResults = new ArrayList<>();
         processResults = results.getResults();
         setLayout();
@@ -84,11 +85,18 @@ public class ResultPage extends VBox {
             record.getChildren().addAll(processNumber, processWatingTime, processTurnaroundTime, processResponseTime);
             getChildren().add(record);
         }*/
-
+        Label aWaiting = new Label("Average Waiting time\t: " + results.getAverageWaiting());
+        Label aResponse = new Label("Average Respond time\t: " + results.getAverageResponse());
+        Label aTurnAround = new Label("Average Turn around\t: " + results.getAverageTurnaround());
+        getChildren().add(aWaiting);
+        getChildren().add(aResponse);
+        getChildren().add(aTurnAround);
         restartBtn = new Button("Restart");
         getChildren().add(restartBtn);
         restartBtn.setOnAction(event -> Main.navigateTo(new RegisterPage()));
     }
+    // update its performance later -_-
+    //may support resizing although
 
     private void drawChart(){
         HBox chart = new HBox(1);
@@ -96,23 +104,27 @@ public class ResultPage extends VBox {
              ) {
             pSum += processResult.getEndTime() - processResult.getStartTime();
         }
+        renderCharts(chart, chart.getWidth());
         chart.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 chart.getChildren().clear();
-                for(int i=0; i< processResults.size(); i++){
-                    Label process = new Label("P" + processResults.get(i).getNumber());
-                    float pwidth = (((float)(processResults.get(i).getEndTime() - processResults.get(i).getStartTime())/(float)(pSum)) * newValue.floatValue());
-                    process.setMinWidth(pwidth - 1);
-                    process.setMinHeight(50);
-                    process.setAlignment(Pos.CENTER);
-                    process.setStyle("-fx-background-color: #ff0000");
-                    Label processStartTime = new Label(""+processResults.get(i).getStartTime());
-                    chart.getChildren().add(new VBox(process,processStartTime));
-                    System.out.println(newValue);
-                }
+                renderCharts(chart, newValue);
             }
         });
         getChildren().add(chart);
+    }
+    private void renderCharts(HBox chart, Number width)
+    {
+        for(int i=0; i< processResults.size(); i++){
+            Label process = new Label("P" + processResults.get(i).getNumber());
+            float pwidth = (((float)(processResults.get(i).getEndTime() - processResults.get(i).getStartTime())/(float)(pSum)) * width.floatValue());
+            process.setMinWidth(pwidth - 1);
+            process.setMinHeight(50);
+            process.setAlignment(Pos.CENTER);
+            process.setStyle("-fx-background-color: #ff0000");
+            Label processStartTime = new Label(""+processResults.get(i).getStartTime());
+            chart.getChildren().add(new VBox(process,processStartTime));
+        }
     }
 }
