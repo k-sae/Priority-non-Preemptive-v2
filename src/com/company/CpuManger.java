@@ -17,16 +17,17 @@ public  class  CpuManger {
         while (!processes.isEmpty()){
             number = findPriority(i);
             if(number !=0){
-               i = addResult(deleteProcesses(number),i);
+               i = this.addResult(this.deleteProcesses(number),i);
             }
             else {
+                addEmptyResult(i);
                 i++;
             }
         }
 
     }
     public  ArrayList<ProcessResult> endResults (){
-        return processResults;
+        return this.processResults;
     }
     private Process deleteProcesses (int number){
         Process process=new Process();
@@ -60,9 +61,38 @@ public  class  CpuManger {
         processResults.add(processResult);
         return end;
     }
+    private void  addEmptyResult  (int time){
+        ProcessResult processResult = new ProcessResult();
+        int  length = processResults.size();
+        int check;
+        if(length == 0) {
+             check = 1;
+        }
+        else {
+           check = processResults.get(length-1).getNumber();
+
+        }
+            if (check != 0) {
+                processResult.setNumber(0);
+                processResult.setStartTime(time);
+                processResult.setEndTime(time + 1);
+                processResult.setWaitingTime(0);
+                processResult.setResponseTime(0);
+                processResult.setTurnaroundTime(0);
+                processResults.add(processResult);
+            }
+
+        else {
+                processResult = processResults.get(processResults.size() - 1);
+                processResult.setEndTime(processResult.getEndTime() + 1);
+                processResults.set(processResults.size() - 1, processResult);
+
+            }
+
+
+    }
     private  int  findPriority (int time) {
-        length = processes.size();
-        Process process = new Process();
+        length = this.processes.size();
         int miniPriority =0 ;
         int number =0 ;
         for (int i = 0; i < length; i++) {
