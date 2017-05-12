@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -108,8 +109,13 @@ public class ResultPage extends VBox {
         chart.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                chart.getChildren().clear();
-                renderCharts(chart, newValue);
+                for (Node node: chart.getChildren()
+                     ) {
+                    if (node instanceof  VBox)
+                    {
+                        ((ChartPortion)(((VBox) node).getChildren().get(0))).setWidthWithRatio(newValue.floatValue());
+                    }
+                }
             }
         });
         getChildren().add(chart);
@@ -117,9 +123,9 @@ public class ResultPage extends VBox {
     private void renderCharts(HBox chart, Number width)
     {
         for(int i=0; i< processResults.size(); i++){
-            Label process = new Label("P" + processResults.get(i).getNumber());
-            float pwidth = (((float)(processResults.get(i).getEndTime() - processResults.get(i).getStartTime())/(float)(pSum)) * width.floatValue());
-            process.setMinWidth(pwidth - 1);
+            float pwidth = (((float)(processResults.get(i).getEndTime() - processResults.get(i).getStartTime())/(float)(pSum)) );
+            ChartPortion process = new ChartPortion("P" + processResults.get(i).getNumber(), pwidth);
+            process.setWidthWithRatio( width.floatValue());
             process.setMinHeight(50);
             process.setAlignment(Pos.CENTER);
             process.setStyle("-fx-background-color: #ff0000");
