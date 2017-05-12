@@ -46,7 +46,14 @@ public class ResultPage extends VBox {
         getChildren().add(title);
 
         drawChart();
-
+        ArrayList<ProcessResult> filteredResults = new ArrayList<>();
+        for (ProcessResult processResult: processResults
+             ) {
+            if (processResult.getNumber() != 0)
+            {
+                filteredResults.add(processResult);
+            }
+        }
         TableColumn<ProcessResult, Integer> processNumberColumn = new TableColumn<>("No.");
         processNumberColumn.setMinWidth(50);
         processNumberColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
@@ -65,13 +72,12 @@ public class ResultPage extends VBox {
         responseTimeColumn.setMinWidth(150);
         responseTimeColumn.setCellValueFactory(new PropertyValueFactory<>("responseTime"));
 
-        ObservableList<ProcessResult> p = FXCollections.observableArrayList(processResults);
+        ObservableList<ProcessResult> p = FXCollections.observableArrayList(filteredResults);
         table = new TableView<>();
         table.setMaxWidth(335);
         table.setMaxHeight(200);
         table.setItems(p);
         table.getColumns().addAll(processNumberColumn, waitingTimeColumn, turnaroundTimeColumn);
-
         getChildren().add(table);
 
 /*
