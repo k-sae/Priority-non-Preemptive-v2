@@ -15,12 +15,16 @@ public class Results {
         CpuManger cpuManger = new CpuManger(processes);
         processResults =cpuManger.endResults();
         int l= processResults.size();
+        int  lenghtActive =0;
         for (int i=0;i<l;i++){
-           averageWaiting += processResults.get(i).getWaitingTime();
-           averageTurnaround += processResults.get(i).getTurnaroundTime();
+            if( processResults.get(i).getNumber() !=0) {
+                averageWaiting += processResults.get(i).getWaitingTime();
+                averageTurnaround += processResults.get(i).getTurnaroundTime();
+                lenghtActive++;
+            }
         }
-        averageWaiting = averageWaiting / l;
-        averageTurnaround =averageTurnaround /l ;
+        averageWaiting = averageWaiting / lenghtActive;
+        averageTurnaround =averageTurnaround /lenghtActive ;
         averageResponse = averageWaiting;
     }
 
