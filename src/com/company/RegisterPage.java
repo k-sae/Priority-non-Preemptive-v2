@@ -59,8 +59,6 @@ public class RegisterPage extends VBox {
 
         getChildren().clear();
 
-        //Label titles = new Label("No.\t    Arrival Time \tCPU Burst Time \t  Priority\t   ");
-        //getChildren().add(titles);
         Label no = new Label("No");
         Label at = new Label("Arrival Time ");
         Label ct = new Label("CPU Burst Time");
