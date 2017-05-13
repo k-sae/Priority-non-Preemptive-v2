@@ -168,7 +168,16 @@ public class ResultPage extends VBox {
                 process.setText("P" + processResults.get(i).getNumber());
                 process.setStyle("-fx-background-color: #ff0000;-fx-border-color:black; -fx-border-width: 3; -fx-border-style: solid;");
             }
+
             chart.getChildren().add(new VBox(process, processStartTime));
+
+            if (i == processResults.size() - 1) {
+                process = new ChartPortion("", 0);
+                process.setMinWidth(25);
+                process.setMinHeight(50);
+                Label processEndTime = new Label("" + processResults.get(i).getEndTime());
+                chart.getChildren().add(new VBox(process, processEndTime));
+            }
         }
     }
 }
