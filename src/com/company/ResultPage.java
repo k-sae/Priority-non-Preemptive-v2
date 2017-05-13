@@ -46,7 +46,14 @@ public class ResultPage extends VBox {
         getChildren().add(title);
 
         drawChart();
-
+        ArrayList<ProcessResult> filteredResults = new ArrayList<>();
+        for (ProcessResult processResult: processResults
+             ) {
+            if (processResult.getNumber() != 0)
+            {
+                filteredResults.add(processResult);
+            }
+        }
         TableColumn<ProcessResult, Integer> processNumberColumn = new TableColumn<>("No.");
         processNumberColumn.setMinWidth(50);
         processNumberColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
@@ -65,13 +72,12 @@ public class ResultPage extends VBox {
         responseTimeColumn.setMinWidth(150);
         responseTimeColumn.setCellValueFactory(new PropertyValueFactory<>("responseTime"));
 
-        ObservableList<ProcessResult> p = FXCollections.observableArrayList(processResults);
+        ObservableList<ProcessResult> p = FXCollections.observableArrayList(filteredResults);
         table = new TableView<>();
         table.setMaxWidth(335);
         table.setMaxHeight(200);
         table.setItems(p);
         table.getColumns().addAll(processNumberColumn, waitingTimeColumn, turnaroundTimeColumn);
-
         getChildren().add(table);
 
 /*
@@ -124,13 +130,16 @@ public class ResultPage extends VBox {
     {
         for(int i=0; i< processResults.size(); i++){
             float pwidth = (((float)(processResults.get(i).getEndTime() - processResults.get(i).getStartTime())/(float)(pSum)) );
-            ChartPortion process = new ChartPortion("P" + processResults.get(i).getNumber(), pwidth);
-            process.setWidthWithRatio( width.floatValue());
+            ChartPortion process = new ChartPortion("", pwidth);
+            process.setWidthWithRatio(width.floatValue());
             process.setMinHeight(50);
             process.setAlignment(Pos.CENTER);
-            process.setStyle("-fx-background-color: #ff0000");
-            Label processStartTime = new Label(""+processResults.get(i).getStartTime());
-            chart.getChildren().add(new VBox(process,processStartTime));
+            Label processStartTime = new Label("" + processResults.get(i).getStartTime());
+            if (processResults.get(i).getNumber() != 0) {
+                process.setText("P" + processResults.get(i).getNumber());
+                process.setStyle("-fx-background-color: #ff0000");
+            }
+            chart.getChildren().add(new VBox(process, processStartTime));
         }
     }
 }
